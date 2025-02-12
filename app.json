@@ -1,5 +1,5 @@
 {
-    "name": "sᴏɴᴀ ᴍᴜsɪᴄ",
+    "name": "𝖵𝖨𝖪𝖱𝖠𝖭𝖳 𝖬𝖴𝖲𝖨𝖢",
     "description": "A Telegram Music Player Bot, written in Python with Pyrogram and Py-Tgcalls.",
     "logo": "https://telegra.ph/file/c53d9a7df9dbaa5f4db05.jpg",
     "keywords": [
@@ -37,7 +37,7 @@
         "required": true
       },
       "STRING_SESSION": {
-        "description": "A Pyrogram v2 String Session from KING_STRING_SESSION_BOT on Telegram.",
+        "description": "A Pyrogram v2 String Session from https://telegram.tools on Telegram.",
         "value": "",
         "required": true
       },

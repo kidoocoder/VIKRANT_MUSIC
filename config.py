@@ -26,7 +26,7 @@ OWNER_ID = int(getenv("OWNER_ID", 7403621976)) # Get this value from @MissRose_b
 
 SUPPORT_CHANNEL = getenv("SUPPORT_CHANNEL", "https://t.me/SYNTAX_WORLD")
 
-SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/VIKRANT_WORLD")
+SUPPORT_CHAT = getenv("SUPPORT_CHAT", "https://t.me/Guppppp_Shuppppp")
 
 # Get your pyrogram v2 session from https://telegram.tools/session-string-generator#pyrogram on Telegram
 
