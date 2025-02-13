@@ -46,28 +46,28 @@ START_IMG_URL = getenv(
 )
 
 PING_IMG_URL = getenv(
-    "PING_IMG_URL", "https://files.catbox.moe/9cevdg.jpg"
+    "PING_IMG_URL", "https://files.catbox.moe/rxsc0h.jpg"
 )
 
 PLAYLIST_IMG_URL = "https://files.catbox.moe/i493lf.jpg"
 
 STATS_IMG_URL = "https://files.catbox.moe/i0qmgf.jpg"
 
-TELEGRAM_AUDIO_URL = "https://telegra.ph/file/8e3552aa743ffdb6f18c9.jpg"
+TELEGRAM_AUDIO_URL = "https://files.catbox.moe/xn98c5.jpg"
 
-TELEGRAM_VIDEO_URL = "https://telegra.ph/file/8e3552aa743ffdb6f18c9.jpg"
+TELEGRAM_VIDEO_URL = "https://files.catbox.moe/xn98c5.jpg"
 
-STREAM_IMG_URL = "https://te.legra.ph/file/bd995b032b6bd263e2cc9.jpg"
+STREAM_IMG_URL = "https://files.catbox.moe/xn98c5.jpg"
 
-SOUNCLOUD_IMG_URL = "https://te.legra.ph/file/bb0ff85f2dd44070ea519.jpg"
+SOUNCLOUD_IMG_URL = "https://files.catbox.moe/xn98c5.jpg"
 
-YOUTUBE_IMG_URL = "https://te.legra.ph/file/6298d377ad3eb46711644.jpg"
+YOUTUBE_IMG_URL = "https://files.catbox.moe/xn98c5.jpg"
 
-SPOTIFY_ARTIST_IMG_URL = "https://te.legra.ph/file/37d163a2f75e0d3b403d6.jpg"
+SPOTIFY_ARTIST_IMG_URL = "https://files.catbox.moe/xn98c5.jpg"
 
-SPOTIFY_ALBUM_IMG_URL = "https://te.legra.ph/file/b35fd1dfca73b950b1b05.jpg"
+SPOTIFY_ALBUM_IMG_URL = "https://files.catbox.moe/xn98c5.jpg"
 
-SPOTIFY_PLAYLIST_IMG_URL = "https://te.legra.ph/file/95b3ca7993bbfaf993dcb.jpg"
+SPOTIFY_PLAYLIST_IMG_URL = "https://files.catbox.moe/xn98c5.jpg"
 
 AUTO_LEAVING_ASSISTANT = bool(getenv("AUTO_LEAVING_ASSISTANT", False)) # Set this to True if you want the assistant to automatically leave chats after an interval
 
