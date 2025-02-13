@@ -87,7 +87,7 @@ HEROKU_API_KEY = getenv("HEROKU_API_KEY") # Get it from http://dashboard.heroku.
 
 UPSTREAM_REPO = getenv(
     "UPSTREAM_REPO",
-    "https://github.com/kidoocoder/VIKRANT",
+    "https://github.com/syntaxworldcodes/VIKRANT_MUSIC",
 )
 UPSTREAM_BRANCH = getenv("UPSTREAM_BRANCH", "main")
 GIT_TOKEN = getenv(
