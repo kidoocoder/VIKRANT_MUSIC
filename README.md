@@ -19,18 +19,6 @@ Copy these blue words on by on from here to use commands in you own vps.
 </h3>
 
 ```console
-sudo apt update && sudo apt install git curl python3-pip ffmpeg -y
-```
-```console
-curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
-```
-```console
-source ~/.bashrc
-```
-```console
-nvm install node
-```
-```console
 sudo apt-get update && sudo apt-get upgrade -y
 ```
 ```console
@@ -38,6 +26,9 @@ sudo apt-get install python3-pip ffmpeg -y
 ```
 ```console
 sudo apt-get install python3-pip -y
+```
+``` console
+curl -fssL https://deb.nodesource.com/setup_19.x | sudo -E bash - && sudo apt-get install nodejs -y && npm i -g npm
 ```
 ```console
 sudo pip3 install -U pip
