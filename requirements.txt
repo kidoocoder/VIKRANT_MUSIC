@@ -26,3 +26,4 @@ youtube-search
 youtube-search-python
 pymongo==4.6.3
 httpx[http2]==0.27.2
+
