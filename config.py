@@ -42,7 +42,7 @@ STRING5 = getenv("STRING_SESSION5", None)
 
 
 START_IMG_URL = getenv(
-    "START_IMG_URL", "https://files.catbox.moe/sz8xwz.jpg"
+    "START_IMG_URL", "https://files.catbox.moe/v3q694.jpg"
 )
 
 PING_IMG_URL = getenv(
