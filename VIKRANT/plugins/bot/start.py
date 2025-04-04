@@ -1,5 +1,7 @@
 import time
-import asyncio  # asyncio ko import karna na bhulein
+import os
+import asyncio
+from PIL import Image, ImageDraw, ImageFilter, ImageOps
 from pyrogram import filters
 from pyrogram.errors import ChannelInvalid
 from pyrogram.enums import ChatType, ChatMembersFilter
@@ -24,58 +26,89 @@ from VIKRANT.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 
+
+async def get_user_profile_pic(client, user_id):
+    try:
+        photos = await client.get_profile_photos(user_id, limit=1)
+        if not photos.photos:
+            return "default.jpg"
+        file_path = await client.download_media(photos.photos[0].file_id, file_name=f"{user_id}.jpg")
+        return file_path
+    except Exception:
+        return "default.jpg"
+
+
+async def get_group_profile_pic(client, chat_id):
+    try:
+        chat = await client.get_chat(chat_id)
+        if chat.photo:
+            file_path = await client.download_media(chat.photo.big_file_id, file_name=f"{chat_id}.jpg")
+            return file_path
+        else:
+            return "default.jpg"
+    except Exception:
+        return "default.jpg"
+
+
+def make_glowing_circle_image(input_path, output_path):
+    base = Image.open(input_path).convert("RGBA").resize((400, 400))
+    mask = Image.new("L", base.size, 0)
+    draw = ImageDraw.Draw(mask)
+    draw.ellipse((0, 0, 400, 400), fill=255)
+    base.putalpha(mask)
+
+    glow = base.copy().filter(ImageFilter.GaussianBlur(15))
+    glow = ImageOps.expand(glow, border=30, fill=(255, 0, 90, 100))
+
+    background = Image.new("RGBA", glow.size, (15, 15, 30, 255))
+    background.paste(glow, (0, 0), glow)
+    background.paste(base, (30, 30), base)
+
+    background.save(output_path)
+
+
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
     await add_served_user(message.from_user.id)
-    
-    # Typing effect part
-    typing_message = await message.reply("<b>𝖣ɪɴɢ..𝖣ᴏɴɢ..❤️‍🔥</b>")  # Initial message
-    
-    # Simulate typing
+
+    typing_message = await message.reply("<b>𝖣ɪɴɢ..𝖣ᴏɴɢ..❤️‍🔥</b>")
     typing_text = "<b>𝖲ᴛᴀʀᴛɪɴɢ...❤️‍🔥</b>"
-    
-    for i in range(1, len(typing_text) + 1):  # Loop through each character
+    for i in range(1, len(typing_text) + 1):
         try:
             await typing_message.edit_text(typing_text[:i])
-            await asyncio.sleep(0.001)  # Add delay to simulate typing
+            await asyncio.sleep(0.001)
         except Exception as e:
-            print(f"Error while editing message: {e}")  # Print error if occurs
+            print(f"Error while editing message: {e}")
 
-    await asyncio.sleep(2)  # Keep message for a while
-    await typing_message.delete()  # Delete the message
+    await asyncio.sleep(2)
+    await typing_message.delete()
 
-    # Continue with the existing logic after typing effect
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
-
         if name[0:3] == "del":
             await del_plist_msg(client=client, message=message, _=_)
-
-        if name[0:4] == "help":
+        elif name[0:4] == "help":
             keyboard = help_pannel(_)
             return await message.reply_photo(
                 photo=config.START_IMG_URL,
-                caption=_["help_1"].format(config.SUPPORT_CHAT),
+                caption=_['help_1'].format(config.SUPPORT_CHAT),
                 reply_markup=keyboard,
             )
-        if name[:8] == "connect_":
+        elif name[:8] == "connect_":
             chat_id = name[8:]
             try:
                 title = (await app.get_chat(chat_id)).title
             except ChannelInvalid:
                 return await message.reply_text(f"ʟᴏᴏʟ ʟɪᴋᴇ ɪ ᴀᴍ ɴᴏᴛ ᴀɴ ᴀᴅᴍɪɴ ᴏғ ᴛʜᴇ ᴄʜᴀᴛ ɪᴅ {chat_id}")
-            
+
             admin_ids = [member.user.id async for member in app.get_chat_members(chat_id, filter=ChatMembersFilter.ADMINISTRATORS)]
             if message.from_user.id not in admin_ids:
                 return await message.reply_text(f"sᴏʀʀʏ sɪʀ ʙᴜᴛ ɪ ᴛʜɪɴᴋ ᴛʜᴀᴛ ʏᴏᴜ ɴᴏᴛ ᴀɴ ᴀᴅᴍɪɴ ᴏғ {title}")
             a = await connect_to_chat(message.from_user.id, chat_id)
-            if a:
-                await message.reply_text(f"ʏᴏᴜ ᴀʀᴇ ɴᴏᴡ ᴄᴏɴɴᴇᴄᴛᴇᴅ ᴛᴏ {title}")
-            else:
-                await message.reply_text(a)
-        
-        if name[0:3] == "sud":
+            return await message.reply_text(f"ʏᴏᴜ ᴀʀᴇ ɴᴏᴡ ᴄᴏɴɴᴇᴄᴛᴇᴅ ᴛᴏ {title}" if a else a)
+
+        elif name[0:3] == "sud":
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
                 return await app.send_message(
@@ -83,7 +116,8 @@ async def start_pm(client, message: Message, _):
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>sᴜᴅᴏʟɪsᴛ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
                 )
             return
-        if name[0:3] == "inf":
+
+        elif name[0:3] == "inf":
             m = await message.reply_text("🔎")
             query = (str(name)).replace("info_", "", 1)
             query = f"https://www.youtube.com/watch?v={query}"
@@ -101,12 +135,10 @@ async def start_pm(client, message: Message, _):
                 title, duration, views, published, channellink, channel, app.mention
             )
             key = InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(text=_["S_B_8"], url=link),
-                        InlineKeyboardButton(text=_["S_B_9"], url=config.SUPPORT_CHAT),
-                    ],
-                ]
+                [[
+                    InlineKeyboardButton(text=_["S_B_8"], url=link),
+                    InlineKeyboardButton(text=_["S_B_9"], url=config.SUPPORT_CHAT),
+                ]]
             )
             await m.delete()
             await app.send_photo(
@@ -121,10 +153,13 @@ async def start_pm(client, message: Message, _):
                     text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ ᴛᴏ ᴄʜᴇᴄᴋ <b>ᴛʀᴀᴄᴋ ɪɴғᴏʀᴍᴀᴛɪᴏɴ</b>.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
                 )
     else:
+        pp_path = await get_user_profile_pic(client, message.from_user.id)
+        final_pp = f"{message.from_user.id}_start.jpg"
+        make_glowing_circle_image(pp_path, final_pp)
         out = private_panel(_)
         await message.reply_photo(
-            photo=config.START_IMG_URL,
-            caption=_["start_2"].format(message.from_user.mention, app.mention),
+            photo=final_pp,
+            caption=_['start_2'].format(message.from_user.mention, app.mention),
             reply_markup=InlineKeyboardMarkup(out),
         )
         if await is_on_off(2):
@@ -133,63 +168,19 @@ async def start_pm(client, message: Message, _):
                 text=f"{message.from_user.mention} ᴊᴜsᴛ sᴛᴀʀᴛᴇᴅ ᴛʜᴇ ʙᴏᴛ.\n\n<b>ᴜsᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>\n<b>ᴜsᴇʀɴᴀᴍᴇ :</b> @{message.from_user.username}",
             )
 
-# Rest of the code remains the same...
-
-
-
-
 
 @app.on_message(filters.command(["start"]) & filters.group & ~BANNED_USERS)
 @LanguageStart
 async def start_gp(client, message: Message, _):
+    pp_path = await get_group_profile_pic(client, message.chat.id)
+    final_pp = f"{message.chat.id}_group.jpg"
+    make_glowing_circle_image(pp_path, final_pp)
+
     out = start_panel(_)
     uptime = int(time.time() - _boot_)
     await message.reply_photo(
-        photo=config.START_IMG_URL,
-        caption=_["start_1"].format(app.mention, get_readable_time(uptime)),
+        photo=final_pp,
+        caption=_['start_1'].format(app.mention, get_readable_time(uptime)),
         reply_markup=InlineKeyboardMarkup(out),
     )
     return await add_served_chat(message.chat.id)
-
-
-@app.on_message(filters.new_chat_members, group=-1)
-async def welcome(client, message: Message):
-    for member in message.new_chat_members:
-        try:
-            language = await get_lang(message.chat.id)
-            _ = get_string(language)
-            if await is_banned_user(member.id):
-                try:
-                    await message.chat.ban_member(member.id)
-                except:
-                    pass
-            if member.id == app.id:
-                if message.chat.type != ChatType.SUPERGROUP:
-                    await message.reply_text(_["start_4"])
-                    return await app.leave_chat(message.chat.id)
-                if message.chat.id in await blacklisted_chats():
-                    await message.reply_text(
-                        _["start_5"].format(
-                            app.mention,
-                            f"https://t.me/{app.username}?start=sudolist",
-                            config.SUPPORT_CHAT,
-                        ),
-                        disable_web_page_preview=True,
-                    )
-                    return await app.leave_chat(message.chat.id)
-
-                out = start_panel(_)
-                await message.reply_photo(
-                    config.START_IMG_URL,
-                    caption=_["start_3"].format(
-                        message.from_user.first_name,
-                        app.mention,
-                        message.chat.title,
-                        app.mention,
-                    ),
-                    reply_markup=InlineKeyboardMarkup(out),
-                )
-                await add_served_chat(message.chat.id)
-                await message.stop_propagation()
-        except Exception as ex:
-            print(ex)
