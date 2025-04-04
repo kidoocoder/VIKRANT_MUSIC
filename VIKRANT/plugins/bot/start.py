@@ -3,17 +3,11 @@ import os
 import asyncio
 from PIL import Image, ImageDraw, ImageFilter, ImageOps
 from pyrogram import filters
-from pyrogram.enums import ChatType
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 import config
 from VIKRANT import app
 from VIKRANT.misc import _boot_
-from VIKRANT.utils.database import (
-    add_served_chat,
-    add_served_user,
-    is_banned_user,
-    is_on_off,
-)
+from VIKRANT.utils.database import add_served_chat, add_served_user, is_banned_user, is_on_off
 from VIKRANT.utils.decorators.language import LanguageStart
 from VIKRANT.utils.formatters import get_readable_time
 from VIKRANT.utils.inline import private_panel, start_panel
@@ -23,16 +17,15 @@ from strings import get_string
 
 async def get_user_profile_pic(client, user_id):
     try:
-        user = await client.get_users(user_id)  # Ensure user exists
-        photos = await client.get_chat_photos(user.id, limit=1)
+        user = await client.get_users(user_id)  
+        photos = client.get_chat_photos(user.id)  # Returns async generator
+        
+        async for photo in photos:  # Iterate properly
+            file_path = await client.download_media(photo.file_id, file_name=f"{user_id}.jpg")
+            return file_path
 
-        if not photos:
-            print(f"[LOG] No profile photo for {user_id}, using default.")
-            return "VIKRANT/assets/dp.jpg"
-
-        file_path = await client.download_media(photos[0].file_id, file_name=f"{user_id}.jpg")
-        print(f"[LOG] Profile photo saved: {file_path}")
-        return file_path
+        print(f"[LOG] No profile photo for {user_id}, using default.")
+        return "VIKRANT/assets/dp.jpg"
 
     except Exception as e:
         print(f"[ERROR] Failed to get profile photo for {user_id}: {e}")
@@ -113,4 +106,5 @@ async def start_gp(client, message: Message, _):
         reply_markup=InlineKeyboardMarkup(out),
     )
     return await add_served_chat(message.chat.id)
+
 
