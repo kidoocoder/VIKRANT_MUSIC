@@ -114,9 +114,8 @@ async def start_pm(client, message: Message, _):
                 return await app.send_message(
                     chat_id=config.LOGGER_ID,
                     text=f"{message.from_user.mention} ᴊᴟʀʀ ʏʏʀᴛ ᴝᴀʀᴛᴇᴅ ᴝʀᴇ ʀʀʀ ʀʀʀ ʀʀʀ <b>sᴜᴅᴏʟɪᴛ</b>.
-
-<b>ᴜᴄᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>
-<b>ᴜᴄᴇʀɴɐᴛᴇ :</b> @{message.from_user.username}",
+                    <b>ᴜᴄᴇʀ ɪᴅ :</b> <code>{message.from_user.id}</code>
+                    <b>ᴜᴄᴇʀɴɐᴛᴇ :</b> @{message.from_user.username}",
                 )
             return
 
